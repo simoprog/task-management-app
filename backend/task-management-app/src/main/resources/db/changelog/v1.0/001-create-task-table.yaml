@@ -48,11 +48,3 @@ databaseChangeLog:
                   defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                   constraints:
                     nullable: false
-        - addCheckConstraint:
-            tableName: tasks
-            constraintName: chk_task_status
-            checkCondition: "status IN ('TODO', 'IN_PROGRESS', 'COMPLETED')"
-        - addCheckConstraint:
-            tableName: tasks
-            constraintName: chk_task_priority
-            checkCondition: "priority IN ('LOW', 'MEDIUM', 'HIGH')"
