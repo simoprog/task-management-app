@@ -2,7 +2,6 @@ package com.taskapp.task_management_app.dto.mapper;
 
 import com.taskapp.task_management_app.dto.TaskCreateDTO;
 import com.taskapp.task_management_app.dto.TaskResponseDTO;
-import com.taskapp.task_management_app.dto.TaskUpdateDTO;
 import com.taskapp.task_management_app.entity.Task;
 import com.taskapp.task_management_app.enums.Priority;
 import com.taskapp.task_management_app.enums.TaskStatus;
@@ -12,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.taskapp.task_management_app.enums.TaskStatus.IN_PROGRESS;
+
 
 @Component
 public class TaskMapper {
