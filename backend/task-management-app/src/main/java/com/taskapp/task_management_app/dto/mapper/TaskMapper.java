@@ -1,7 +1,7 @@
 package com.taskapp.task_management_app.dto.mapper;
 
-import com.taskapp.task_management_app.dto.TaskCreateDTO;
 import com.taskapp.task_management_app.dto.TaskResponseDTO;
+import com.taskapp.task_management_app.dto.TaskUpSertDTO;
 import com.taskapp.task_management_app.entity.Task;
 import com.taskapp.task_management_app.enums.Priority;
 import com.taskapp.task_management_app.enums.TaskStatus;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Component
 public  class TaskMapper {
-    public  Task toEntity(TaskCreateDTO dto) {
+    public  Task toEntity(TaskUpSertDTO dto) {
         Task task = new Task();
         task.setTitle(dto.getTitle());
         task.setDescription(dto.getDescription());

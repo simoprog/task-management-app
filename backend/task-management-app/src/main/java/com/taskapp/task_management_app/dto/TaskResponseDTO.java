@@ -1,5 +1,6 @@
 package com.taskapp.task_management_app.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.taskapp.task_management_app.enums.Priority;
 import com.taskapp.task_management_app.enums.TaskStatus;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,9 @@ public class TaskResponseDTO {
     private TaskStatus status;
     private Priority priority;
     private LocalDate dueDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedAt;
 
     private boolean isOverdue;
