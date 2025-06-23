@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaskCreateDTO {
+public class TaskUpSertDTO {
 
     @NotBlank(message = "Title is required")
     @Size(max = 255, message = "Title must be less than 255 characters")

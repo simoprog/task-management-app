@@ -1,8 +1,7 @@
 package com.taskapp.task_management_app.controller;
 
-import com.taskapp.task_management_app.dto.TaskCreateDTO;
 import com.taskapp.task_management_app.dto.TaskResponseDTO;
-import com.taskapp.task_management_app.dto.TaskUpdateDTO;
+import com.taskapp.task_management_app.dto.TaskUpSertDTO;
 import com.taskapp.task_management_app.dto.mapper.TaskMapper;
 import com.taskapp.task_management_app.entity.Task;
 import com.taskapp.task_management_app.enums.Priority;
@@ -55,7 +54,7 @@ public class TaskController {
      * POST /api/tasks
      */
     @PostMapping
-    public ResponseEntity<TaskResponseDTO> createTask(@Valid @RequestBody TaskCreateDTO task) {
+    public ResponseEntity<TaskResponseDTO> createTask(@Valid @RequestBody TaskUpSertDTO task) {
         log.info("POST /api/tasks - Creating new task: {}", task.getTitle());
 
         Task createdTask = taskService.createTask(taskMapper.toEntity(task));
@@ -64,14 +63,20 @@ public class TaskController {
 
     /**
      * Update existing task
-     * PUT /api/tasks/{id}
+     * PUT /api/v1/tasks/{id}
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id,
-                                           @Valid @RequestBody Task task) {
-        log.info("PUT /api/tasks/{} - Updating task", id);
-        Task updatedTask = taskService.updateTask(id, task);
-        return ResponseEntity.ok(updatedTask);
+    public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable Long id,
+                                                      @Valid @RequestBody TaskUpSertDTO taskUpdateDTO) {
+        log.info("PUT /api/v1/tasks/{} - Updating task", id);
+
+        Task taskEntity = taskMapper.toEntity(taskUpdateDTO);
+
+        Task updatedTask = taskService.updateTask(id, taskEntity);
+
+        TaskResponseDTO responseDTO = taskMapper.toResponseDTO(updatedTask);
+
+        return ResponseEntity.ok(responseDTO);
     }
 
     /**
@@ -87,34 +92,49 @@ public class TaskController {
 
     /**
      * Mark task as in progress
-     * PUT /api/tasks/{id}/start
+     * PUT /api/v1/tasks/{id}/start
      */
     @PutMapping("/{id}/start")
-    public ResponseEntity<Task> markTaskAsInProgress(@PathVariable Long id) {
-        log.info("PUT /api/tasks/{}/start - Marking task as in progress", id);
+    public ResponseEntity<TaskResponseDTO> markTaskAsInProgress(@PathVariable Long id) {
+        log.info("PUT /api/v1/tasks/{}/start - Marking task as in progress", id);
         Task inProgressTask = taskService.markTaskAsInProgress(id);
-        return ResponseEntity.ok(inProgressTask);
+        return ResponseEntity.ok(taskMapper.toResponseDTO(inProgressTask));
     }
 
     /**
+     * Mark task as completed
+     * PUT /api/v1/tasks/{id}/start
+     */
+    @PutMapping("/{id}/completed")
+    public ResponseEntity<TaskResponseDTO> markTaskAsCompleted(@PathVariable Long id) {
+        log.info("PUT /api/v1/tasks/{}/start - Marking task as completed", id);
+        Task completedTask = taskService.markTaskAsCompleted(id);
+        return ResponseEntity.ok(taskMapper.toResponseDTO(completedTask));
+    }
+
+
+    /**
      * Update task status
-     * PUT /api/tasks/{id}/status
+     * PUT /api/v1/tasks/{id}/status
      */
     @PutMapping("/{id}/status")
-    public ResponseEntity<Task> updateTaskStatus(@PathVariable Long id, @RequestParam TaskStatus status) {
-        log.info("PUT /api/tasks/{}/status - Updating status to: {}", id, status);
+    public ResponseEntity<TaskResponseDTO> updateTaskStatus(@PathVariable Long id,
+                                                            @RequestParam TaskStatus status) {
+        log.info("PUT /api/v1/tasks/{}/status - Updating status to: {}", id, status);
         Task updatedTask = taskService.updateTaskStatus(id, status);
-        return ResponseEntity.ok(updatedTask);
+        return ResponseEntity.ok(taskMapper.toResponseDTO(updatedTask));
     }
 
     /**
      * Update task priority
-     * PUT /api/tasks/{id}/priority
+     * PUT /api/v1/tasks/{id}/priority
      */
     @PutMapping("/{id}/priority")
-    public ResponseEntity<Task> updateTaskPriority(@PathVariable Long id, @RequestParam Priority priority) {
-        log.info("PUT /api/tasks/{}/priority - Updating priority to: {}", id, priority);
+    public ResponseEntity<TaskResponseDTO> updateTaskPriority(@PathVariable Long id,
+                                                              @RequestParam Priority priority) {
+        log.info("PUT /api/v1/tasks/{}/priority - Updating priority to: {}", id, priority);
         Task updatedTask = taskService.updateTaskPriority(id, priority);
-        return ResponseEntity.ok(updatedTask);
+        return ResponseEntity.ok(taskMapper.toResponseDTO(updatedTask));
     }
+
 }
