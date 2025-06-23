@@ -22,7 +22,7 @@ public class Task {
     private Long id;
 
     @NotBlank(message = "Title is required")
-    @Size(max = 100, message = "Title must be less than 100 characters")
+    @Size(max = 255, message = "Title must be less than 100 characters")
     private String title;
 
     @Size(max = 1000, message = "Description must be less than 1000 characters")

@@ -1,5 +1,6 @@
 package com.taskapp.task_management_app.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.taskapp.task_management_app.enums.Priority;
 import com.taskapp.task_management_app.enums.TaskStatus;
 import jakarta.validation.constraints.Size;
@@ -24,5 +25,6 @@ public class TaskUpdateDTO {
 
     private Priority priority;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
 }

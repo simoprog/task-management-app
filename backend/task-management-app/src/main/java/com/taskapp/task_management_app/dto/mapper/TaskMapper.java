@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 
 @Component
-public class TaskMapper {
-    public Task toEntity(TaskCreateDTO dto) {
+public  class TaskMapper {
+    public  Task toEntity(TaskCreateDTO dto) {
         Task task = new Task();
         task.setTitle(dto.getTitle());
         task.setDescription(dto.getDescription());
