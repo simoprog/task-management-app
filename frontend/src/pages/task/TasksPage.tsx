@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useTasks } from "../../api/task/useTaskQueries";
 import LoadingState from "../../components/ui/LoadingState";
 import EmptyState from "../../components/ui/EmptyState";
@@ -15,9 +14,6 @@ const TasksPage = () => {
     navigate("/tasks/create");
   };
 
-  useEffect(() => {
-    console.log("Tasks loaded:", tasks);
-  }, [tasks]);
   if (isLoading) {
     return <LoadingState />;
   }
@@ -28,9 +24,9 @@ const TasksPage = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
+        <div className="flex-1 min-w-0">
           <h1 className="text-3xl font-bold text-gray-900">Tasks</h1>
-          <p className="text-gray-600 mt-1">
+          <p className=" text-gray-600 mt-1">
             Manage and track your tasks
             {tasks && ` (${tasks.length} tasks)`}
           </p>
