@@ -18,7 +18,7 @@ export const useCreateTask = () => {
 export const useUpdateTask = () => {
   const queryClient = new QueryClient();
   return useMutation({
-    mutationFn: ({ id, taskData }: { id: string; taskData: TaskUpSertDTO }) =>
+    mutationFn: ({ id, taskData }: { id: number; taskData: TaskUpSertDTO }) =>
       taskService.updateTask(id, taskData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.TASKS] });
@@ -31,7 +31,7 @@ export const useUpdateTask = () => {
 export const useDeleteTask = () => {
   const queryClient = new QueryClient();
   return useMutation({
-    mutationFn: (id: string) => taskService.deleteTask(id),
+    mutationFn: (id: number) => taskService.deleteTask(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.TASKS] });
     },
@@ -43,7 +43,7 @@ export const useDeleteTask = () => {
 export const useMarkTaskAsCompleted = () => {
   const queryClient = new QueryClient();
   return useMutation({
-    mutationFn: (id: string) => taskService.markTaskAsCompleted(id),
+    mutationFn: (id: number) => taskService.markTaskAsCompleted(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.TASKS] });
     },
@@ -55,7 +55,7 @@ export const useMarkTaskAsCompleted = () => {
 export const useMarkTaskAsInProgress = () => {
   const queryClient = new QueryClient();
   return useMutation({
-    mutationFn: (id: string) => taskService.markTaskAsInProgress(id),
+    mutationFn: (id: number) => taskService.markTaskAsInProgress(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.TASKS] });
     },
