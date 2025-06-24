@@ -50,7 +50,7 @@ const TasksPage = () => {
           onAction={handleCreateTask}
         />
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-4 sm:gap-6">
           {tasks.map((task) => (
             <TaskCard
               key={task.id}
