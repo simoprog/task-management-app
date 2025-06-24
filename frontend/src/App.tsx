@@ -1,10 +1,32 @@
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
+import Layout from "./components/layout/Layout";
+import TaskDetailPage from "./pages/task/TaskDetailPage";
+import TasksPage from "./pages/task/TasksPage";
+import CreateTaskPage from "./pages/task/CreateTaskPage";
+import { Toaster } from "react-hot-toast";
+import EditTaskPage from "./pages/task/EditTaskPage";
 
 function App() {
   return (
-    <div className="bg-red-100 h-screen flex items-center justify-center">
-      test
-    </div>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          {/* Redirect root to dashboard */}
+          <Route path="/" element={<Navigate to="/tasks" replace />} />
+
+          {/* Main routes */}
+          <Route path="/tasks/" element={<TasksPage />} />
+          <Route path="/tasks/create" element={<CreateTaskPage />} />
+          <Route path="/tasks/edit/:id" element={<EditTaskPage />} />
+          <Route path="/tasks/:id" element={<TaskDetailPage />} />
+
+          {/* Catch all route */}
+          <Route path="*" element={<Navigate to="/tasks" replace />} />
+        </Routes>
+        <Toaster position="bottom-center" />
+      </Layout>
+    </BrowserRouter>
   );
 }
 
