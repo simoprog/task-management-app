@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTasks } from "../../api/task/useTaskQueries";
 import LoadingState from "../../components/ui/LoadingState";
 import EmptyState from "../../components/ui/EmptyState";
@@ -6,29 +6,11 @@ import Button from "../../components/ui/Button";
 import { Plus } from "lucide-react";
 import TaskCard from "../../components/task/TaskCard";
 import { useNavigate } from "react-router-dom";
-import TaskForm from "../../components/task/forms/TaskForm";
-import { useCreateTask } from "../../api/task/useTaskMutations";
-import type { TaskUpSertDTO } from "../../constants/types";
-import toast from "react-hot-toast";
 
 const TasksPage = () => {
   const { data: tasks, isLoading, error } = useTasks();
   const navigate = useNavigate();
-  const createTask = useCreateTask();
-  const [showForm, setShowForm] = useState(false);
 
-  const handleSubmit = async (data: TaskUpSertDTO): Promise<void> => {
-    try {
-      await createTask.mutateAsync(data);
-      toast.success("Task created successfully!");
-      navigate("/tasks");
-    } catch {
-      toast.error("Failed to create task:");
-    }
-  };
-  const handleClose = (): void => {
-    setShowForm(false);
-  };
   const handleCreateTask = () => {
     navigate("/tasks/create");
   };
@@ -73,38 +55,10 @@ const TasksPage = () => {
             <TaskCard
               key={task.id}
               task={task}
-              onEdit={() => console.log("Edit task", task.id)}
+              onEdit={() => navigate(`/tasks/edit/${task.id}`)}
             />
           ))}
         </div>
-      )}
-
-      {/* Task Form 
-      {showCreateForm && (
-        <TaskForm
-          task={editingTask}
-          onClose={handleCloseForm}
-          onSubmit={
-            editingTask
-              ? mutations.updateTask.mutate
-              : mutations.createTask.mutate
-          }
-          isLoading={
-            editingTask
-              ? mutations.updateTask.isLoading
-              : mutations.createTask.isLoading
-          }
-        />
-      )}
-        */}
-
-      {/* Form */}
-      {showForm && (
-        <TaskForm
-          onSubmit={handleSubmit}
-          onClose={handleClose}
-          isLoading={createTask.isPending}
-        />
       )}
     </div>
   );

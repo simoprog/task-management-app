@@ -4,22 +4,21 @@ import React, {
   type FormEvent,
   type ChangeEvent,
 } from "react";
-import { X } from "lucide-react";
+import { Calendar, Flag, List, FileText } from "lucide-react";
 import {
-  Priority,
   type TaskResponseDTO,
   type TaskUpSertDTO,
+  Priority,
   STATUS_LABELS,
   PRIORITY_LABELS,
   DEFAULT_VALUES,
   TaskStatus,
 } from "../../../constants/types";
 import Button from "../../ui/Button";
-import Input from "../../ui/Input";
-import Card from "../../ui/Card";
 
 interface TaskFormProps {
   task?: TaskResponseDTO | null;
+  mode?: "create" | "edit";
   onClose: () => void;
   onSubmit: (data: TaskUpSertDTO) => void;
   isLoading?: boolean;
@@ -36,13 +35,11 @@ interface FormData {
 interface FormErrors {
   title?: string;
   description?: string;
-  priority?: string;
-  status?: string;
-  dueDate?: string;
 }
 
 const TaskForm: React.FC<TaskFormProps> = ({
   task,
+  mode = "create",
   onClose,
   onSubmit,
   isLoading = false,
@@ -57,6 +54,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
   const [errors, setErrors] = useState<FormErrors>({});
 
+  // Initialize form data
   useEffect(() => {
     if (task) {
       setFormData({
@@ -65,14 +63,6 @@ const TaskForm: React.FC<TaskFormProps> = ({
         priority: task.priority || DEFAULT_VALUES.PRIORITY,
         status: task.status || DEFAULT_VALUES.STATUS,
         dueDate: task.dueDate || "",
-      });
-    } else {
-      setFormData({
-        title: "",
-        description: "",
-        priority: DEFAULT_VALUES.PRIORITY,
-        status: DEFAULT_VALUES.STATUS,
-        dueDate: "",
       });
     }
   }, [task]);
@@ -98,24 +88,14 @@ const TaskForm: React.FC<TaskFormProps> = ({
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    // Title validation
     if (!formData.title.trim()) {
       newErrors.title = "Title is required";
     } else if (formData.title.length > 255) {
       newErrors.title = "Title must be less than 255 characters";
     }
 
-    // Description validation
     if (formData.description.length > 1000) {
       newErrors.description = "Description must be less than 1000 characters";
-    }
-
-    // Due date validation (optional but if provided, should be valid)
-    if (formData.dueDate) {
-      const date = new Date(formData.dueDate);
-      if (isNaN(date.getTime())) {
-        newErrors.dueDate = "Please enter a valid date";
-      }
     }
 
     setErrors(newErrors);
@@ -129,7 +109,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
     const submitData = {
       title: formData.title.trim(),
-      description: formData.description.trim(),
+      description: formData.description.trim() || undefined,
       priority: formData.priority,
       status: formData.status,
       dueDate: formData.dueDate || undefined,
@@ -138,92 +118,118 @@ const TaskForm: React.FC<TaskFormProps> = ({
     onSubmit(submitData);
   };
 
-  const handleClose = (): void => {
-    setFormData({
-      title: "",
-      description: "",
-      priority: DEFAULT_VALUES.PRIORITY,
-      status: DEFAULT_VALUES.STATUS,
-      dueDate: "",
-    });
-    setErrors({});
-    onClose();
+  const getPriorityColor = (priority: Priority) => {
+    switch (priority) {
+      case Priority.HIGH:
+        return "text-red-600 bg-red-50 border-red-200";
+      case Priority.MEDIUM:
+        return "text-yellow-600 bg-yellow-50 border-yellow-200";
+      case Priority.LOW:
+        return "text-gray-600 bg-gray-50 border-gray-200";
+      default:
+        return "text-gray-600 bg-gray-50 border-gray-200";
+    }
+  };
+
+  const getStatusColor = (status: TaskStatus) => {
+    switch (status) {
+      case TaskStatus.TODO:
+        return "text-gray-600 bg-gray-50 border-gray-200";
+      case TaskStatus.IN_PROGRESS:
+        return "text-blue-600 bg-blue-50 border-blue-200";
+      case TaskStatus.COMPLETED:
+        return "text-green-600 bg-green-50 border-green-200";
+      default:
+        return "text-gray-600 bg-gray-50 border-gray-200";
+    }
   };
 
   return (
-    <Card className="w-full max-w-md max-h-[90vh] overflow-y-auto">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {task ? "Edit Task" : "Create New Task"}
-          </h2>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleClose}
-            className="p-1"
+    <div className="p-6 sm:p-8">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Title Field */}
+        <div className="space-y-2">
+          <label className="flex items-center text-sm font-medium text-gray-700">
+            <FileText className="w-4 h-4 mr-2 text-gray-500" />
+            Task Title
+            <span className="text-red-500 ml-1">*</span>
+          </label>
+          <input
+            name="title"
+            value={formData.title}
+            onChange={handleInputChange}
+            className={`
+              block w-full px-4 py-3 border rounded-lg text-lg
+              placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 
+              focus:border-blue-500 transition-colors
+              ${
+                errors.title
+                  ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                  : "border-gray-300"
+              }
+              ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
+            `}
+            placeholder="What needs to be done?"
             disabled={isLoading}
-          >
-            <X className="w-4 h-4" />
-          </Button>
+          />
+          {errors.title && (
+            <p className="text-sm text-red-600 flex items-center">
+              <span className="w-1 h-1 bg-red-600 rounded-full mr-2"></span>
+              {errors.title}
+            </p>
+          )}
         </div>
 
-        {/* Form Fields */}
-        <Input
-          label="Title"
-          name="title"
-          value={formData.title}
-          onChange={handleInputChange}
-          error={errors.title}
-          required
-          placeholder="Enter task title..."
-          disabled={isLoading}
-        />
-
-        <div className="space-y-1">
-          <label className="block text-sm font-medium text-gray-700">
+        {/* Description Field */}
+        <div className="space-y-2">
+          <label className="flex items-center text-sm font-medium text-gray-700">
+            <List className="w-4 h-4 mr-2 text-gray-500" />
             Description
           </label>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleInputChange}
-            rows={3}
+            rows={4}
             className={`
-                block w-full px-3 py-2 border border-gray-300 rounded-lg 
-                placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 
-                focus:border-blue-500 transition-colors resize-vertical
-                ${
-                  errors.description
-                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                    : ""
-                }
-                ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
-              `}
-            placeholder="Enter task description..."
+              block w-full px-4 py-3 border rounded-lg
+              placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 
+              focus:border-blue-500 transition-colors resize-vertical
+              ${
+                errors.description
+                  ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                  : "border-gray-300"
+              }
+              ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
+            `}
+            placeholder="Add more details about this task..."
             disabled={isLoading}
           />
           {errors.description && (
-            <p className="text-sm text-red-600">{errors.description}</p>
+            <p className="text-sm text-red-600 flex items-center">
+              <span className="w-1 h-1 bg-red-600 rounded-full mr-2"></span>
+              {errors.description}
+            </p>
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">
-              Priority <span className="text-red-500">*</span>
+        {/* Priority and Status Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="flex items-center text-sm font-medium text-gray-700">
+              <Flag className="w-4 h-4 mr-2 text-gray-500" />
+              Priority
             </label>
             <select
               name="priority"
               value={formData.priority}
               onChange={handleInputChange}
               className={`
-                  block w-full px-3 py-2 border border-gray-300 rounded-lg 
-                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                  ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
-                `}
+                block w-full px-4 py-3 border rounded-lg
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                ${getPriorityColor(formData.priority)}
+                ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
+              `}
               disabled={isLoading}
             >
               {Object.entries(Priority).map(([key, value]) => (
@@ -234,19 +240,21 @@ const TaskForm: React.FC<TaskFormProps> = ({
             </select>
           </div>
 
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">
-              Status <span className="text-red-500">*</span>
+          <div className="space-y-2">
+            <label className="flex items-center text-sm font-medium text-gray-700">
+              <List className="w-4 h-4 mr-2 text-gray-500" />
+              Status
             </label>
             <select
               name="status"
               value={formData.status}
               onChange={handleInputChange}
               className={`
-                  block w-full px-3 py-2 border border-gray-300 rounded-lg 
-                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                  ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
-                `}
+                block w-full px-4 py-3 border rounded-lg
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                ${getStatusColor(formData.status)}
+                ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
+              `}
               disabled={isLoading}
             >
               {Object.entries(TaskStatus).map(([key, value]) => (
@@ -258,32 +266,48 @@ const TaskForm: React.FC<TaskFormProps> = ({
           </div>
         </div>
 
-        <Input
-          label="Due Date"
-          name="dueDate"
-          type="date"
-          value={formData.dueDate}
-          onChange={handleInputChange}
-          error={errors.dueDate}
-          disabled={isLoading}
-        />
+        {/* Due Date Field */}
+        <div className="space-y-2">
+          <label className="flex items-center text-sm font-medium text-gray-700">
+            <Calendar className="w-4 h-4 mr-2 text-gray-500" />
+            Due Date
+          </label>
+          <input
+            name="dueDate"
+            type="date"
+            value={formData.dueDate}
+            onChange={handleInputChange}
+            className={`
+              block w-full px-4 py-3 border border-gray-300 rounded-lg
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+              ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
+            `}
+            disabled={isLoading}
+          />
+        </div>
 
         {/* Actions */}
-        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+        <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 pt-6 border-t border-gray-200">
           <Button
             type="button"
             variant="outline"
-            onClick={handleClose}
+            onClick={onClose}
             disabled={isLoading}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
-          <Button type="submit" loading={isLoading} disabled={isLoading}>
-            {task ? "Update Task" : "Create Task"}
+          <Button
+            type="submit"
+            loading={isLoading}
+            disabled={isLoading}
+            className="w-full sm:w-auto"
+          >
+            {mode === "create" ? "Create Task" : "Update Task"}
           </Button>
         </div>
       </form>
-    </Card>
+    </div>
   );
 };
 

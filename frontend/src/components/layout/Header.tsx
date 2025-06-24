@@ -1,15 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { CheckSquare, BarChart3, List } from "lucide-react";
+import { CheckSquare, List } from "lucide-react";
 
 const Header = () => {
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
 
-  const navItems = [
-    { path: "/dashboard", label: "Dashboard", icon: BarChart3 },
-    { path: "/tasks", label: "Tasks", icon: List },
-  ];
+  const navItems = [{ path: "/tasks", label: "Tasks", icon: List }];
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">

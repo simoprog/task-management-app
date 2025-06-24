@@ -14,7 +14,7 @@ export const taskService = {
   },
 
   // Get task by ID
-  getTaskById: async (id: string): Promise<TaskResponseDTO> => {
+  getTaskById: async (id: number): Promise<TaskResponseDTO> => {
     const response = await api.get(`/tasks/${id}`);
     return response.data;
   },

@@ -13,9 +13,8 @@ export interface TaskResponseDTO {
   priorityLabel: string;
 }
 export interface TaskUpSertDTO {
-  id?: number;
   title: string;
-  description: string;
+  description?: string;
   status: TaskStatus;
   dueDate?: string | null;
   priority: Priority;

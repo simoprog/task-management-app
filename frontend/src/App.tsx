@@ -5,6 +5,7 @@ import TaskDetailPage from "./pages/task/TaskDetailPage";
 import TasksPage from "./pages/task/TasksPage";
 import CreateTaskPage from "./pages/task/CreateTaskPage";
 import { Toaster } from "react-hot-toast";
+import EditTaskPage from "./pages/task/EditTaskPage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           {/* Main routes */}
           <Route path="/tasks/" element={<TasksPage />} />
           <Route path="/tasks/create" element={<CreateTaskPage />} />
+          <Route path="/tasks/edit/:id" element={<EditTaskPage />} />
           <Route path="/tasks/:id" element={<TaskDetailPage />} />
 
           {/* Catch all route */}
